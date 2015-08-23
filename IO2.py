@@ -7,6 +7,7 @@ Created on Sun Aug 23 11:34:55 2015
 
 path = '/home/tom/Python/'
 
+
 import numpy as np
 
 rows = 5000
