@@ -57,3 +57,48 @@ plt.grid(True)
 plt.xlabel('x')
 plt.ylabel('f(x)')
 plt.show()
+
+
+#  Regression on Multiple Dimensions
+def fm((x,y)):
+    return np.sin(x) + 0.25 * x + np.sqrt(y) + 0.05 * y ** 2
+
+x = np.linspace(0, 10, 20)
+y = np.linspace(0, 10, 20)
+X, Y = np.meshgrid(x , y) # generates 2-d grids out of the 1-d arrays
+
+Z = fm((X, Y))
+x = X.flatten()
+y = Y.flatten() # yields 1-d arrays from the 2-d grids
+
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib as mpl
+
+fig = plt.figure(figsize=(9, 6))
+ax = fig.gca(projection='3d')
+surf = ax.plot_surface(X, Y, Z, rstride=2, cstride=2, cmap=mpl.cm.coolwarm, linewidth=0.5, antialiased=True)
+
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('f(x,y)')
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+
+# set of basis functions for regression
+matrix = np.zeros((len(x), 6+1))
+matrix[:, 6] = np.sqrt(y)
+matrix[:, 5] = np.sin(x)
+matrix[:, 4] = y ** 2
+matrix[:, 3] = x ** 2
+matrix[:, 2] = y
+matrix[:, 1] = x
+matrix[:, 0] = 1
+
+# print(matrix)
+
+# import least squares regression for multiple dimensions (works for single dim as well)
+import statsmodels.api as sm
+model = sm.OLS(fm((x,y)), matrix).fit()
+
+
+print(model.rsquared)
