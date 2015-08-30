@@ -100,5 +100,41 @@ matrix[:, 0] = 1
 import statsmodels.api as sm
 model = sm.OLS(fm((x,y)), matrix).fit()
 
-
+# Determine how close data is to the regression plot
 print(model.rsquared)
+
+# Optimal regression parameters
+a=model.params
+print(a)
+
+# reg_func gives function values for regression function
+def reg_func(a, (x,y)):
+    f6 = a[6] * np.sqrt(y)
+    f5 = a[5] * np.sin(x)
+    f4 = a[4] * y ** 2
+    f3 = a[3] * x ** 2
+    f2 = a[2] * y
+    f1 = a[1] * x
+    f0 = a[0] * 1
+    return (f6 + f5 + f4 + f3 + f2 + f1 + f0)
+
+RZ = reg_func(a, (X,Y))
+
+# Compare RZ to Z using a set of plots
+fig = plt.figure(figsize=(9, 6))
+ax = fig.gca(projection='3d')
+surf1 = ax.plot_surface(X, Y, Z, rstride=2, cstride=2, cmap=mpl.cm.coolwarm, linewidth=0.5, antialiased=True)
+surf2 = ax.plot_wireframe(X, Y, RZ, rstride=2, cstride=2, label='regression')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('f(x,y)')
+ax.legend()
+fig.colorbar(surf, shrink=0.5, aspect=5)
+plt.show()
+
+
+
+
+
+
+
