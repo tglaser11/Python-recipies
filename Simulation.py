@@ -96,3 +96,17 @@ print(gbm_mcs_amer(110., option='call'))
 print(gbm_mcs_amer(110., option='put'))
 
 
+# Plotting strike price vs. value of option
+
+amer_res = []
+k_list = np.arange(80., 120.1, 5.)
+for K in k_list:
+    amer_res.append(gbm_mcs_amer(K, 'put'))
+amer_res = np.array(amer_res)
+
+plt.plot(k_list, amer_res, 'b', label='American Option Put')
+plt.legend(loc=0)
+plt.grid(True)
+plt.xlabel('Strike Price')
+plt.ylabel('Option Value')
+plt.show()
