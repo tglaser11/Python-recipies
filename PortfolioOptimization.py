@@ -118,3 +118,32 @@ print(optv['x'].round(3))
 # Print expected portfolio return, volatility and Sharpe ratio
 print(statistics(optv['x']).round(3))
 
+
+# Efficient Frontier
+# Use algos below to derive all optimal portfolios with higher return than minimum variance portfolios
+
+def min_func_port(weights):
+    return statistics(weights)[1]
+
+# iterate over several target return levels to get minimum target volatilities
+trets =np.linspace(0.0, 0.25, 50)
+tvols = []
+for tret in trets:
+    cons = ({'type': 'eq', 'fun': lambda x: statistics(x)[0] - tret}, {'type': 'eq', 'fun': lambda x: np.sum(x) - 1})
+    res = sco.minimize(min_func_port, noa * [1. / noa,], method='SLSQP', bounds=bnds, constraints=cons)
+    tvols.append(res['fun'])
+tvols = np.array(tvols)
+
+plt.figure(figsize=(8, 4))
+plt.scatter(pvols, prets, c=prets / pvols, marker='o')      # random portfolio composition
+plt.scatter(tvols, trets, c=trets / tvols, marker='x')      # efficient frontier
+plt.plot(statistics(opts['x'])[1], statistics(opts['x'])[0], 'r*', markersize=15.0)     # portfolio with highest Sharpe ratio
+plt.plot(statistics(optv['x'])[1], statistics(optv['x'])[0], 'y*', markersize=15.0)     # minimum variance portfolio
+plt.grid(True)
+plt.xlabel('expected volatility')
+plt.ylabel('expected return')
+plt.colorbar(label='Sharpe ratio')
+plt.show()
+
+
+
